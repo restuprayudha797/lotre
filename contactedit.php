@@ -240,7 +240,7 @@
 
             <div class="container">
                 <div class="logo">
-                    <img src="canada.png" alt="') }}" width="100">
+                    <img src="img/canada.png" alt="') }}" width="100">
                 </div>
             </div>
 

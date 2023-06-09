@@ -450,7 +450,7 @@ $dataLotto = getTwoDataLottoDesc();
   <div class="container">
    <div class=" logo row">
     <div class="col-md-12 col-lg-5 offset-lg-1 text-center">
-     <img src="canada.png" alt="Canada Flag" style="max-width: 33%; height: auto;">
+     <img src="img/canada.png" alt="Canada Flag" style="max-width: 33%; height: auto;">
     </div>
    </div>
   </div>
@@ -502,7 +502,7 @@ $dataLotto = getTwoDataLottoDesc();
    <div class="col-xl-6 col-lg-6 col-md-8 col-sm-9 d-xl-flex d-lg-flex d-block align-items-end">
     <div class="part-img animated">
      <div class="logo">
-      <img class="" src="ay.png" alt="">
+      <img class="" src="img/ay.png" alt="">
      </div>
     </div>
    </div>

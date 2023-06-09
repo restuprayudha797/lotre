@@ -1,10 +1,15 @@
-<?php
+<?php 
 
+require 'config/function.php';
 
-include 'config/db_confiq.php';
+$kategori = getAllKategori();
+
+if(isset($_POST['insert'])){
+
+    tambahKategori();
+}
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,9 +20,9 @@ include 'config/db_confiq.php';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <title>Aplikasi Slot Greend Land</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -30,8 +35,6 @@ include 'config/db_confiq.php';
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
 
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
@@ -43,9 +46,15 @@ include 'config/db_confiq.php';
 
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-
     <script>
+        $(document).ready(function() {
+            // Fungsi untuk menambahkan kelas "active" pada link halaman yang aktif
+            $('.pagination a').click(function() {
+                $('.pagination a').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+
         // Select input field
         var input = document.getElementById("myInput");
 
@@ -59,26 +68,20 @@ include 'config/db_confiq.php';
 
             // Loop through all table rows, and hide those that do not match the search query
             for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td");
-                var shouldDisplay = false;
-
-                // Loop through all table cells in current row
-                for (var j = 0; j < td.length; j++) {
-                    var cell = td[j];
-                    if (cell) {
-                        txtValue = cell.textContent || cell.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            shouldDisplay = true;
-                            break;
-                        }
+                td = tr[i].getElementsByTagName("td")[
+                    1]; // Change the index to the column number you want to filter
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
                     }
                 }
-
-                // Set display style based on whether the row should be visible or not
-                tr[i].style.display = shouldDisplay ? "" : "none";
             }
         });
     </script>
+
     <style>
         .container {
             margin: 20px;
@@ -162,10 +165,47 @@ include 'config/db_confiq.php';
             background-color: darkcyan;
         }
 
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 10px;
+        }
 
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3e8e41;
         }
 
         table {
@@ -216,14 +256,12 @@ include 'config/db_confiq.php';
     </style>
 
 </head>
+<!-- INI LOGIKA PHP UNTUK TAMBAH DATA -->
+
 
 <body id="page-top">
-    <!-- INI LOGIKA UNTUK UBAH DATA -->
 
-
-
-
-
+    <!-- INI UNTUK DATA -->
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -317,13 +355,13 @@ include 'config/db_confiq.php';
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="">
+                                <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -333,128 +371,117 @@ include 'config/db_confiq.php';
                     </ul>
 
                 </nav>
-                <div class="w3-container">
-                    <button style="border-radius: 100px;" onclick="document.getElementById('id01').style.display='block'" class="w3-button w3-teal">Tambah
-                        Data</button>
-                    <div id="id01" class="w3-modal">
-                        <div class="w3-modal-content w3-animate-top w3-card-4">
-                            <header class="w3-container w3-teal">
-                                <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-                                <h2>Form Tambah Data</h2>
-                            </header>
-                            <form action="" method="POST">
-                                <div class="modal-body">
-                                    <table class="table table-striped bordered">
-                                        <tbody>
-                                            <tr>
-                                                <td>IdLotte</td>
-                                                <td><input placeholder="Masukkan IdLotte " type="number" class="form-control" id="idlotte" name="idlotte" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Draw Nomor</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="text" class="form-control" id="drawno" name="drawno" placeholder="Masukan Nomor Lengkap" required=""></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Angka 1</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="number" class="form-control" id="  angka1" name="  angka1" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Angka 2</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="number" class="form-control" id="  angka2" name="  angka2" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Angka 3</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="number" class="form-control" id="  angka3" name="  angka3" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Angka 4</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="number" class="form-control" id="  angka4" name="  angka4" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Angka 5</td>
-                                                <td><input placeholder="Masukkan Nomor Yang Benar Jangan Salah" type="number" class="form-control" id="  angka5" name="  angka5" required></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Tanggal Update</td>
-                                                <td><input type="date" class="form-control" id="  tanggalupdate" name="  tanggalupdate" required></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" name="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Tambah
-                                        Data</button>
 
+
+                <!-- The Modal -->
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div style="background-color: green;color:white" class="modal-header">
+                                <h1 style="margin-left: 130px;" class="modal-title">Tambah Nomor Lotte</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <div class="form-container">
+                                    <form>
+                                        
+                                        <div class="form-group">
+                                            <label for="lotte-kategori">Kategori Lotte:</label>
+                                            <select style="background-color: white;" id="lotte-kategori" name="lotte-kategori">
+                                                <option value="kategori-1">Pilih kategori</option>
+                                                <option value="kategori-2">Four number</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nomor-draw">Nomor Draw:</label>
+                                            <input type="text" id="nomor-draw" name="nomor-draw">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nomor-lengkap">Masukkan Nomor Lengkap:</label>
+                                            <input type="text" id="nomor-lengkap" name="nomor-lengkap">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nomor-lotte-1">Angka 1:</label>
+                                            <input type="text" id="nomor-lotte-1" name="nomor-lotte-1">
+                                            <label for="nomor-lotte-2">Angka 2:</label>
+                                            <input type="text" id="nomor-lotte-2" name="nomor-lotte-2">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nomor-lotte-3">Angka 3:</label>
+                                            <input type="text" id="nomor-lotte-3" name="nomor-lotte-3">
+                                            <label for="nomor-lotte-4">Angka 4:</label>
+                                            <input type="text" id="nomor-lotte-4" name="nomor-lotte-4">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tanggal-update">Tanggal Update:</label>
+                                            <input type="date" id="tanggal-update" name="tanggal-update">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Tambah ">
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+
+
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="container mt-3">
+                <!-- /.container-fluid -->
+                <div class="container mt-3 p-5">
+                    <h1 style="margin-left: 300px;">Kategori Lotto</h1>
 
-                    <h2>Data Lotto</h2>
-
-                    <table id="dataTable" class="table table-striped table-bordered" style="width:100%">
-
+                    <tbody>
+                        <tr>
+                            <form method="POST" action="">
+                                <table>
+                                    <tr>
+                                        <td style="width:25pc;"><input type="text" class="form-control" required="" name="kategori" placeholder="Masukan Kategori Baru"></td>
+                                        <td style="padding-left:10px;"><button name="insert" class="btn btn-primary">Insert Data</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </tr>
+                    </tbody>
+                    <table id="dataTable" class="table table-striped table-bordered" style="width:100%; margin-top: 10px;">
                         <thead>
                             <tr>
-
-                                <th>Idlotte</th>
-                                <th>Drawno</th>
-                                <th>Angka1</th>
-                                <th>angka2</th>
-                                <th>angka3</th>
-                                <th>angka4</th>
-                                <th>angka5</th>
-                                <th>tanggalUpdate</th>
+                                <th>Nomor</th>
+                                <th>Kategori</th>
+                                <th>Tanggal Input</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $i = 1; ?>
+                            <?php foreach($kategori as $row) : ?>
                             <tr>
-                                <td>1</td>
-                                <td>123</td>
-                                <td>5</td>
-                                <td>7</td>
-                                <td>9</td>
-                                <td>2</td>
-                                <td>4</td>
-                                <td>2023-06-01</td>
-                                <td>
-                                    <a href="hapusdata.php?idlotte=1" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus data ini?');">Hapus</a>
-                                    <a href="ubah.php?idlotte=1" class="btn btn-warning btn-sm">Ubah Data</a>
-                                </td>
+                                <td><?= $i ?></td>
+                                <td><?= $row['kategori'] ?></td>
+                                <td><?= $row['tanggalinput'] ?></td>
+                                <td><a href="hapuskategori.php?id=<?= $row['id_kategori'] ?>" class="btn btn-danger">Hapus</a></td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>456</td>
-                                <td>3</td>
-                                <td>8</td>
-                                <td>1</td>
-                                <td>6</td>
-                                <td>2</td>
-                                <td>2023-06-02</td>
-                                <td>
-                                    <a href="hapusdata.php?idlotte=2" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus data ini?');">Hapus</a>
-                                    <a href="ubah.php?idlotte=2" class="btn btn-warning btn-sm">Ubah Data</a>
-                                </td>
-                            </tr>
-                            <!-- Tambahkan baris lainnya sesuai dengan data yang Anda miliki -->
+                            <?php $i++ ?>
+                            <?php endforeach ?>
                         </tbody>
-                        <script>
-                            $(document).ready(function() {
-                                $('#example').DataTable();
-                            });
-                        </script>
                     </table>
 
+
                 </div>
-                <!-- /.container-fluid -->
             </div>
 
-
-
-            <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
@@ -462,37 +489,43 @@ include 'config/db_confiq.php';
                     </div>
                 </div>
             </footer>
-            <!-- End of Footer
+            <!-- /.container-fluid -->
+
+        </div>
+
+        <!-- Footer -->
+
+        <!-- End of Footer
 
         </div>
         <!-- End of Content Wrapper -->
-        </div>
+    </div>
 
-        <!-- End of Page Wrapper -->
+    <!-- End of Page Wrapper -->
 
-        <!-- Scroll to Top Button-->
-        <a class="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
-        </a>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-        <!-- Logout Modal-->
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-
-                        </button>
-                    </div>
-                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <a class="btn btn-primary" href="login.php">Logout</a>
-                    </div>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.php">Logout</a>
                 </div>
             </div>
         </div>
+    </div>
 
     </div>
 
